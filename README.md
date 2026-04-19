@@ -2,18 +2,22 @@ WorkforceIQ is a decision interface for HR Managers at Medika Nusantara.
 It is not just a dashboard — it is a decision product, enabling HR Managers to take immediate action based on what they see.
 
 -Key Features
-Feature	Description
-Dataset Toggle	Switch between Dataset A (Messy) and Dataset B (Clean) to directly observe differences in insight quality
-Dashboard	Overview of high-risk employees, average confidence, skill gaps, and pending reviews
-Employee Risk List	Filter by risk tier and view attrition score + skill profile per employee
-Identity Resolution	Explorer showing resolved, flagged, and unresolved records across 3 systems
-Data Quality Impact	Side-by-side comparison of messy vs clean data — the core argument of the case
-Data Architecture	5-layer model from source systems to AI output
+| Feature                 | Description                                                                                               |
+| ----------------------- | --------------------------------------------------------------------------------------------------------- |
+| **Dataset Toggle**      | Switch between Dataset A (Messy) and Dataset B (Clean) to directly observe differences in insight quality |
+| **Dashboard**           | Overview of high-risk employees, average confidence, skill gaps, and pending reviews                      |
+| **Employee Risk List**  | Filter by risk tier and view attrition score + skill profile per employee                                 |
+| **Identity Resolution** | Explorer showing resolved, flagged, and unresolved records across 3 systems                               |
+| **Data Quality Impact** | Side-by-side comparison of messy vs clean data — the core argument of the case                            |
+| **Data Architecture**   | 5-layer model from source systems to AI output                                                            |
+
 -Confidence Signaling
-Confidence	UI Representation
-≥ 0.80	Score fully displayed with green badge
-0.60–0.79	Score displayed with uncertainty note and amber badge
-< 0.60	Score hidden → “Review Needed”
+| Confidence | UI Representation                                           |
+| ---------- | ----------------------------------------------------------- |
+| ≥ 0.80     | Score fully displayed with a green badge                    |
+| 0.60–0.79  | Score displayed with an uncertainty note and an amber badge |
+| < 0.60     | Score **hidden** → “Review Needed”                          |
+
 
 Principle: It is better to hide a prediction than to show one that cannot be trusted.
 
@@ -22,24 +26,28 @@ Dataset A — Messy (Enterprise Reality)
 
 Represents the real condition of Medika Nusantara’s data at initial access:
 
-Issue	Count
-Missing skill fields	48% of records
-Missing performance history	44% of records
-Missing location	17% of records
-Conflicting join dates (HRIS vs ATS)	30 records
-Near-duplicate records	10 records
-Inconsistent job titles	23+ variants
+| Issue                                | Count          |
+| ------------------------------------ | -------------- |
+| Missing skill fields                 | 48% of records |
+| Missing performance history          | 44% of records |
+| Missing location                     | 17% of records |
+| Conflicting join dates (HRIS vs ATS) | 30 records     |
+| Near-duplicate records               | 10 records     |
+| Inconsistent job titles              | 23+ variants   |
+
 Dataset B — Clean (Post-Processing)
 
 After identity resolution, skill inference, and confidence scoring:
 
-Metric	Value
-Identity resolved	200 / 200 (100%)
-Avg data confidence score	0.71
-HIGH risk employees	1
-MEDIUM risk employees	31
-Records flagged for HR review	37
-Skills inferred from role	91 records
+| Metric                        | Value            |
+| ----------------------------- | ---------------- |
+| Identity resolved             | 200 / 200 (100%) |
+| Avg data confidence score     | 0.71             |
+| HIGH risk employees           | 1                |
+| MEDIUM risk employees         | 31               |
+| Records flagged for HR review | 37               |
+| Skills inferred from role     | 91 records       |
+
 -Key Columns in Dataset B
 canonical_id              → Unique ID after identity resolution
 job_title_normalized      → Standardized role (6 canonical roles)
@@ -51,7 +59,6 @@ risk_tier                 → HIGH / MEDIUM / LOW
 data_confidence_score     → 0.0 – 1.0
 review_flag               → True if confidence < 0.60
 review_reason             → Reason(s) for flag (pipe-separated)
- Attrition Risk Score Logic
 
 The score is calculated using behavioral proxies, replacing Oracle Payroll data which was blocked due to legal constraints (Day 30 constraint):
 
