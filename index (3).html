@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkforceIQ — Workforce Intelligence Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:    #0F172A;
+    --navy2:   #1E3A5F;
+    --teal:    #0D9488;
+    --teal2:   #14B8A6;
+    --mint:    #CCFBF1;
+    --white:   #FFFFFF;
+    --off:     #F8FAFC;
+    --g100:    #F1F5F9;
+    --g200:    #E2E8F0;
+    --g400:    #94A3B8;
+    --g600:    #475569;
+    --g800:    #1E293B;
+    --red:     #EF4444;
+    --orange:  #F97316;
+    --amber:   #F59E0B;
+    --green:   #22C55E;
+    --green2:  #16A34A;
+    --shadow:  0 1px 3px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.06);
+    --shadow2: 0 2px 8px rgba(0,0,0,.10), 0 8px 24px rgba(0,0,0,.08);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: var(--g800);
+    min-height: 100vh;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0; width: 220px;
+    background: var(--navy);
+    border-right: 1px solid rgba(255,255,255,.07);
+    display: flex; flex-direction: column;
+    z-index: 100;
+  }
+  .sidebar-logo {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+  }
+  .logo-mark {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; font-weight: 500;
+    color: var(--teal2); letter-spacing: .12em; text-transform: uppercase;
+  }
+  .logo-name {
+    font-size: 18px; font-weight: 700;
+    color: var(--white); line-height: 1.2; margin-top: 4px;
+  }
+  .sidebar-client {
+    font-size: 11px; color: var(--g400); margin-top: 6px;
+    font-family: 'DM Mono', monospace;
+  }
+  .nav {
+    padding: 16px 0; flex: 1;
+  }
+  .nav-label {
+    font-size: 10px; font-weight: 600; color: var(--g400);
+    letter-spacing: .1em; text-transform: uppercase;
+    padding: 0 20px; margin: 12px 0 6px;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 20px; cursor: pointer;
+    font-size: 13.5px; font-weight: 500; color: var(--g400);
+    border-left: 2px solid transparent;
+    transition: all .15s;
+  }
+  .nav-item:hover { color: var(--white); background: rgba(255,255,255,.04); }
+  .nav-item.active {
+    color: var(--teal2); border-left-color: var(--teal2);
+    background: rgba(13,148,136,.08);
+  }
+  .nav-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink:0; }
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255,255,255,.07);
+    font-size: 11px; color: var(--g400); font-family: 'DM Mono', monospace;
+  }
+  .status-dot {
+    display: inline-block; width: 6px; height: 6px;
+    border-radius: 50%; background: var(--green); margin-right: 6px;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    margin-left: 220px;
+    min-height: 100vh;
+    background: var(--off);
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--g200);
+    padding: 0 28px;
+    height: 58px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .topbar-title {
+    font-size: 15px; font-weight: 600; color: var(--navy);
+  }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .dataset-toggle {
+    display: flex; background: var(--g100); border-radius: 8px; padding: 3px;
+  }
+  .toggle-btn {
+    padding: 5px 14px; border-radius: 6px; font-size: 12px; font-weight: 600;
+    cursor: pointer; border: none; background: transparent;
+    color: var(--g400); transition: all .2s; font-family: 'DM Sans', sans-serif;
+  }
+  .toggle-btn.active {
+    background: var(--white); color: var(--navy);
+    box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  }
+  .toggle-btn.active.messy { color: var(--orange); }
+  .toggle-btn.active.clean { color: var(--teal); }
+  .data-badge {
+    padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;
+    font-family: 'DM Mono', monospace;
+  }
+  .data-badge.messy { background: #FFF7ED; color: var(--orange); border: 1px solid #FED7AA; }
+  .data-badge.clean { background: #F0FDFA; color: var(--teal); border: 1px solid #99F6E4; }
+
+  /* ── CONTENT ── */
+  .content { padding: 24px 28px; }
+
+  /* ── VIEWS ── */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── DATA QUALITY BANNER ── */
+  .quality-banner {
+    border-radius: 10px; padding: 14px 18px;
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 20px;
+    transition: all .3s;
+  }
+  .quality-banner.messy {
+    background: #FFF7ED; border: 1px solid #FED7AA;
+  }
+  .quality-banner.clean {
+    background: #F0FDFA; border: 1px solid #99F6E4;
+  }
+  .banner-icon { font-size: 22px; flex-shrink: 0; }
+  .banner-text { flex: 1; }
+  .banner-title { font-size: 13px; font-weight: 700; }
+  .banner-title.messy { color: var(--orange); }
+  .banner-title.clean { color: var(--teal); }
+  .banner-sub { font-size: 12px; color: var(--g600); margin-top: 2px; }
+  .banner-stat {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px; font-weight: 500;
+  }
+  .banner-stat.messy { color: var(--orange); }
+  .banner-stat.clean { color: var(--teal); }
+
+  /* ── STAT CARDS ROW ── */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: var(--white); border-radius: 10px;
+    padding: 16px 18px; box-shadow: var(--shadow);
+    border-left: 3px solid transparent;
+    transition: all .3s;
+  }
+  .stat-card:hover { box-shadow: var(--shadow2); transform: translateY(-1px); }
+  .stat-label { font-size: 11px; font-weight: 600; color: var(--g400); text-transform: uppercase; letter-spacing: .06em; }
+  .stat-value { font-size: 28px; font-weight: 700; line-height: 1.1; margin: 6px 0 4px; }
+  .stat-sub { font-size: 11.5px; color: var(--g400); }
+  .stat-card.danger { border-left-color: var(--red); }
+  .stat-card.danger .stat-value { color: var(--red); }
+  .stat-card.warning { border-left-color: var(--amber); }
+  .stat-card.warning .stat-value { color: var(--amber); }
+  .stat-card.success { border-left-color: var(--green); }
+  .stat-card.success .stat-value { color: var(--green2); }
+  .stat-card.info { border-left-color: var(--teal); }
+  .stat-card.info .stat-value { color: var(--teal); }
+
+  /* ── TABLE SECTION ── */
+  .table-section {
+    background: var(--white); border-radius: 12px;
+    box-shadow: var(--shadow); overflow: hidden;
+  }
+  .table-header {
+    padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--g200);
+  }
+  .table-title { font-size: 14px; font-weight: 700; color: var(--navy); }
+  .table-sub { font-size: 12px; color: var(--g400); margin-top: 2px; }
+  .filter-row {
+    padding: 10px 20px;
+    display: flex; gap: 8px;
+    background: var(--g100);
+    border-bottom: 1px solid var(--g200);
+    flex-wrap: wrap;
+  }
+  .filter-chip {
+    padding: 4px 12px; border-radius: 20px; font-size: 11.5px; font-weight: 600;
+    cursor: pointer; border: 1.5px solid var(--g200);
+    background: var(--white); color: var(--g600);
+    transition: all .15s; user-select: none;
+  }
+  .filter-chip:hover { border-color: var(--teal); color: var(--teal); }
+  .filter-chip.active { background: var(--teal); border-color: var(--teal); color: var(--white); }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: var(--g100); }
+  th {
+    padding: 10px 14px; text-align: left;
+    font-size: 11px; font-weight: 700; color: var(--g400);
+    text-transform: uppercase; letter-spacing: .07em;
+    border-bottom: 1px solid var(--g200);
+    white-space: nowrap;
+  }
+  td {
+    padding: 11px 14px; font-size: 13px; color: var(--g800);
+    border-bottom: 1px solid var(--g100);
+    vertical-align: middle;
+  }
+  tr:hover td { background: #F8FAFC; }
+  tr:last-child td { border-bottom: none; }
+
+  .emp-name { font-weight: 600; color: var(--navy); }
+  .emp-id { font-family: 'DM Mono', monospace; font-size: 10.5px; color: var(--g400); }
+
+  .risk-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 9px; border-radius: 20px;
+    font-size: 11px; font-weight: 700; letter-spacing: .04em;
+  }
+  .risk-badge.HIGH { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+  .risk-badge.MEDIUM { background: #FFF7ED; color: var(--orange); border: 1px solid #FED7AA; }
+  .risk-badge.LOW { background: #F0FDF4; color: var(--green2); border: 1px solid #BBF7D0; }
+
+  .conf-bar-wrap { display: flex; align-items: center; gap: 8px; }
+  .conf-bar { width: 64px; height: 5px; border-radius: 3px; background: var(--g200); overflow: hidden; }
+  .conf-fill { height: 100%; border-radius: 3px; transition: width .4s; }
+  .conf-val { font-family: 'DM Mono', monospace; font-size: 11.5px; font-weight: 500; width: 32px; }
+  .conf-val.hi { color: var(--green2); }
+  .conf-val.med { color: var(--amber); }
+  .conf-val.lo { color: var(--red); }
+
+  .skill-pill {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-size: 10.5px; font-weight: 500; margin: 1px;
+    background: var(--g100); color: var(--g600);
+  }
+  .skill-pill.inferred { background: #FEF9C3; color: #92400E; }
+  .skill-pill.missing { background: #FEF2F2; color: var(--red); text-decoration: line-through; }
+
+  .action-btn {
+    padding: 5px 12px; border-radius: 6px; font-size: 11.5px; font-weight: 600;
+    cursor: pointer; border: none; font-family: 'DM Sans', sans-serif;
+    transition: all .15s;
+  }
+  .action-btn.primary { background: var(--teal); color: var(--white); }
+  .action-btn.primary:hover { background: var(--teal2); }
+  .action-btn.secondary { background: var(--g100); color: var(--g600); }
+  .action-btn.secondary:hover { background: var(--g200); }
+  .action-btn.disabled { background: var(--g100); color: var(--g400); cursor: not-allowed; opacity: .6; }
+
+  /* ── REVIEW FLAG ── */
+  .review-row td { background: #FFFBEB !important; }
+  .review-flag {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 8px; border-radius: 4px;
+    font-size: 10.5px; font-weight: 700;
+    background: #FEF9C3; color: #B45309; border: 1px solid #FDE68A;
+  }
+
+  /* ── SUPPRESSED SCORE ── */
+  .score-suppressed {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; color: var(--g400); font-style: italic;
+  }
+
+  /* ── COMPARISON VIEW ── */
+  .comparison-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 20px;
+  }
+  .comparison-panel {
+    background: var(--white); border-radius: 12px;
+    box-shadow: var(--shadow); overflow: hidden;
+  }
+  .cp-header {
+    padding: 14px 18px;
+    font-size: 13px; font-weight: 700;
+    border-bottom: 1px solid var(--g200);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .cp-header.messy { color: var(--orange); background: #FFF7ED; }
+  .cp-header.clean { color: var(--teal); background: #F0FDFA; }
+  .cp-body { padding: 16px 18px; }
+  .metric-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0; border-bottom: 1px solid var(--g100); font-size: 13px;
+  }
+  .metric-row:last-child { border-bottom: none; }
+  .metric-label { color: var(--g600); }
+  .metric-val { font-weight: 700; font-family: 'DM Mono', monospace; font-size: 12.5px; }
+  .metric-val.bad { color: var(--red); }
+  .metric-val.good { color: var(--green2); }
+  .metric-val.warn { color: var(--amber); }
+
+  /* ── IDENTITY EXPLORER ── */
+  .id-card {
+    background: var(--white); border-radius: 10px;
+    padding: 16px 18px; margin-bottom: 12px;
+    box-shadow: var(--shadow);
+    border-left: 3px solid var(--g200);
+    transition: all .2s;
+  }
+  .id-card:hover { box-shadow: var(--shadow2); }
+  .id-card.resolved { border-left-color: var(--teal); }
+  .id-card.flagged { border-left-color: var(--amber); }
+  .id-card.unresolved { border-left-color: var(--red); }
+  .id-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .id-name { font-size: 14px; font-weight: 700; color: var(--navy); }
+  .id-canonical { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--g400); margin-top: 2px; }
+  .id-systems {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;
+  }
+  .sys-tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 5px; font-size: 11px; font-weight: 500;
+    font-family: 'DM Mono', monospace;
+  }
+  .sys-tag.hris { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
+  .sys-tag.ats  { background: #F5F3FF; color: #6D28D9; border: 1px solid #DDD6FE; }
+  .sys-tag.lms  { background: #FFF7ED; color: #C2410C; border: 1px solid #FED7AA; }
+  .sys-tag.missing { background: var(--g100); color: var(--g400); border: 1px solid var(--g200); font-style: italic; }
+  .match-method {
+    font-size: 10.5px; color: var(--g400); margin-top: 6px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center; padding: 48px 20px;
+    color: var(--g400);
+  }
+  .empty-icon { font-size: 36px; margin-bottom: 12px; }
+  .empty-title { font-size: 15px; font-weight: 600; color: var(--g600); margin-bottom: 6px; }
+  .empty-sub { font-size: 13px; }
+
+  /* ── DETAIL MODAL ── */
+  .overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.5); z-index: 200;
+    align-items: center; justify-content: center;
+  }
+  .overlay.open { display: flex; }
+  .modal {
+    background: var(--white); border-radius: 14px;
+    width: 580px; max-width: 95vw; max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  }
+  .modal-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--g200);
+    display: flex; align-items: flex-start; justify-content: space-between;
+  }
+  .modal-title { font-size: 17px; font-weight: 700; color: var(--navy); }
+  .modal-role { font-size: 12px; color: var(--g400); margin-top: 3px; }
+  .modal-close {
+    background: var(--g100); border: none; border-radius: 6px;
+    width: 28px; height: 28px; cursor: pointer;
+    font-size: 16px; color: var(--g600);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-body { padding: 20px 24px; }
+  .modal-section-title {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .1em; color: var(--g400); margin: 16px 0 8px;
+  }
+  .modal-section-title:first-child { margin-top: 0; }
+  .skills-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
+  .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .feature-item {
+    background: var(--g100); border-radius: 7px; padding: 10px 12px;
+  }
+  .feature-key { font-size: 10.5px; color: var(--g400); font-family: 'DM Mono', monospace; }
+  .feature-val { font-size: 14px; font-weight: 600; color: var(--navy); margin-top: 2px; }
+  .action-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--g200);
+    display: flex; gap: 10px; justify-content: flex-end;
+  }
+
+  /* ── UNCERTAINTY CALLOUT ── */
+  .uncertainty-box {
+    background: var(--g100); border-radius: 8px; padding: 12px 14px;
+    border-left: 3px solid var(--amber); margin-top: 8px;
+    font-size: 12px; color: var(--g600);
+  }
+  .uncertainty-box strong { color: var(--g800); }
+
+  /* ── TABS ── */
+  .tabs { display: flex; border-bottom: 2px solid var(--g200); margin-bottom: 20px; }
+  .tab {
+    padding: 10px 18px; font-size: 13.5px; font-weight: 600; cursor: pointer;
+    color: var(--g400); border-bottom: 2px solid transparent; margin-bottom: -2px;
+    transition: all .15s;
+  }
+  .tab:hover { color: var(--navy); }
+  .tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+
+  /* ── CONFIDENCE LEGEND ── */
+  .legend {
+    display: flex; gap: 16px; align-items: center;
+    font-size: 11.5px; color: var(--g600);
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  .page-title {
+    font-size: 21px; font-weight: 700; color: var(--navy); margin-bottom: 4px;
+  }
+  .page-sub { font-size: 13px; color: var(--g400); margin-bottom: 20px; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--g200); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--g400); }
+
+  .fade-in { animation: fadeIn .25s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">&lt;/ WorkforceIQ</div>
+    <div class="logo-name">WorkforceIQ</div>
+    <div class="sidebar-client">Medika Nusantara · 2026</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-label">Intelligence</div>
+    <div class="nav-item active" onclick="showView('dashboard')"><span class="nav-dot"></span>Dashboard</div>
+    <div class="nav-item" onclick="showView('employees')"><span class="nav-dot"></span>Employee Risk List</div>
+    <div class="nav-item" onclick="showView('identity')"><span class="nav-dot"></span>Identity Resolution</div>
+    <div class="nav-item" onclick="showView('comparison')"><span class="nav-dot"></span>Data Quality Impact</div>
+    <div class="nav-label">Platform</div>
+    <div class="nav-item" onclick="showView('architecture')"><span class="nav-dot"></span>Data Architecture</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div><span class="status-dot"></span>Models running</div>
+    <div style="margin-top:4px;opacity:.6;">Last sync: 2h ago</div>
+    <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.07);font-size:10px;color:var(--g400);line-height:1.6;">
+      PM Case Study<br>
+      <span style="color:var(--teal2);font-weight:600;">by Galang Triansyah</span><br>
+      <span style="opacity:.5;">2026</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-title" id="topbar-title">Dashboard Overview</div>
+    <div class="topbar-right">
+      <span style="font-size:12px;color:var(--g400);font-weight:500;">Dataset:</span>
+      <div class="dataset-toggle">
+        <button class="toggle-btn messy active" onclick="setDataset('messy')">⚠ Messy (Raw)</button>
+        <button class="toggle-btn clean" onclick="setDataset('clean')">✓ Clean (Processed)</button>
+      </div>
+      <div class="data-badge messy" id="dataset-badge">Dataset A</div>
+    </div>
+  </div>
+
+  <!-- VIEWS -->
+  <div class="content">
+
+    <!-- ── DASHBOARD VIEW ── -->
+    <div class="view active" id="view-dashboard">
+      <div class="page-title">Workforce Intelligence Dashboard</div>
+      <div class="page-sub" id="dash-sub">Showing raw unprocessed data — confidence and predictions are significantly degraded</div>
+
+      <div class="quality-banner messy" id="quality-banner">
+        <div class="banner-icon">⚠️</div>
+        <div class="banner-text">
+          <div class="banner-title messy">Dataset A — Enterprise Reality (Unprocessed)</div>
+          <div class="banner-sub">45% missing skill fields · 31% no performance history · 30 conflicting join dates · 17% missing location · Identity not resolved across systems</div>
+        </div>
+        <div class="banner-stat messy" id="banner-conf">Avg Confidence: 0.44</div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card danger" id="stat-risk">
+          <div class="stat-label">High-Risk Employees</div>
+          <div class="stat-value" id="val-risk">?</div>
+          <div class="stat-sub" id="sub-risk">Cannot reliably identify</div>
+        </div>
+        <div class="stat-card warning" id="stat-conf">
+          <div class="stat-label">Avg Data Confidence</div>
+          <div class="stat-value" id="val-conf">0.44</div>
+          <div class="stat-sub" id="sub-conf">Below actionable threshold</div>
+        </div>
+        <div class="stat-card warning" id="stat-gaps">
+          <div class="stat-label">Skill Gaps Detected</div>
+          <div class="stat-value" id="val-gaps">~91</div>
+          <div class="stat-sub" id="sub-gaps">Records with missing skills</div>
+        </div>
+        <div class="stat-card info" id="stat-review">
+          <div class="stat-label">Pending HR Review</div>
+          <div class="stat-value" id="val-review">N/A</div>
+          <div class="stat-sub" id="sub-review">Not computed on messy data</div>
+        </div>
+      </div>
+
+      <!-- CHART: confidence distribution -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;">
+        <div class="table-section" style="padding:20px;">
+          <div class="table-title" style="margin-bottom:14px;">Prediction Confidence Distribution</div>
+          <div id="conf-chart" style="display:flex;align-items:flex-end;gap:6px;height:120px;"></div>
+          <div style="display:flex;gap:6px;margin-top:8px;font-size:10px;color:var(--g400);font-family:'DM Mono',monospace;" id="conf-labels"></div>
+        </div>
+        <div class="table-section" style="padding:20px;">
+          <div class="table-title" style="margin-bottom:14px;">Risk Distribution by Department</div>
+          <div id="dept-chart"></div>
+        </div>
+      </div>
+
+      <!-- TOP RISK TABLE (mini) -->
+      <div class="table-section">
+        <div class="table-header">
+          <div>
+            <div class="table-title" id="risk-table-title">Top Employees — Risk Assessment</div>
+            <div class="table-sub" id="risk-table-sub">⚠ Scores hidden for records with confidence &lt; 0.60 (28 employees)</div>
+          </div>
+          <button class="action-btn primary" onclick="showView('employees')">View All →</button>
+        </div>
+        <table>
+          <thead><tr>
+            <th>Employee</th><th>Role</th><th>Branch</th>
+            <th>Attrition Risk</th><th>Skill Gap</th><th>Data Confidence</th><th>Action</th>
+          </tr></thead>
+          <tbody id="top-risk-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── EMPLOYEES VIEW ── -->
+    <div class="view" id="view-employees">
+      <div class="page-title">Employee Risk & Skill Gap List</div>
+      <div class="page-sub">Full employee list with attrition risk scores and skill gap analysis</div>
+
+      <div class="quality-banner messy" id="emp-banner">
+        <div class="banner-icon">⚠️</div>
+        <div class="banner-text">
+          <div class="banner-title messy" id="emp-banner-title">Viewing raw data — predictions unreliable</div>
+          <div class="banner-sub" id="emp-banner-sub">45% missing skill fields. Scores suppressed for low-confidence records. Identity not resolved.</div>
+        </div>
+      </div>
+
+      <div class="table-section">
+        <div class="table-header">
+          <div>
+            <div class="table-title">All Employees</div>
+            <div class="table-sub" id="emp-count">Showing 200 records</div>
+          </div>
+          <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>High conf</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div>Med conf</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Low conf / Review</div>
+          </div>
+        </div>
+        <div class="filter-row" id="risk-filter-row">
+          <div class="filter-chip active" onclick="filterRisk('ALL',this)">All</div>
+          <div class="filter-chip" onclick="filterRisk('HIGH',this)">🔴 High Risk</div>
+          <div class="filter-chip" onclick="filterRisk('MEDIUM',this)">🟡 Medium Risk</div>
+          <div class="filter-chip" onclick="filterRisk('LOW',this)">🟢 Low Risk</div>
+          <div class="filter-chip" onclick="filterRisk('REVIEW',this)">⚠ Review Needed</div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead><tr>
+              <th>Employee</th><th>Role</th><th>Location</th>
+              <th>Risk Tier</th><th>Attrition Score</th><th>Skills</th><th>Data Confidence</th><th>Action</th>
+            </tr></thead>
+            <tbody id="emp-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── IDENTITY VIEW ── -->
+    <div class="view" id="view-identity">
+      <div class="page-title">Identity Resolution Engine</div>
+      <div class="page-sub">Matching employees across SuccessFactors, Workable, and Moodle — without Oracle access</div>
+
+      <div class="tabs">
+        <div class="tab active" onclick="showIdTab('resolved',this)">✓ Resolved</div>
+        <div class="tab" onclick="showIdTab('flagged',this)">⚠ Low Confidence</div>
+        <div class="tab" onclick="showIdTab('unresolved',this)">✗ Unresolved / Duplicates</div>
+      </div>
+
+      <div id="id-cards-container"></div>
+    </div>
+
+    <!-- ── COMPARISON VIEW ── -->
+    <div class="view" id="view-comparison">
+      <div class="page-title">Data Quality Impact Analysis</div>
+      <div class="page-sub">What changes when you fix the data layer — not just the model</div>
+
+      <div class="comparison-grid">
+        <div class="comparison-panel">
+          <div class="cp-header messy">⚠️ Dataset A — Raw Enterprise Data</div>
+          <div class="cp-body" id="compare-messy"></div>
+        </div>
+        <div class="comparison-panel">
+          <div class="cp-header clean">✓ Dataset B — Post-Processing</div>
+          <div class="cp-body" id="compare-clean"></div>
+        </div>
+      </div>
+
+      <div class="table-section" style="padding:20px;">
+        <div class="table-title" style="margin-bottom:16px;">The Argument: Same 10 Employees, Two Different Insights</div>
+        <div style="overflow-x:auto;">
+        <table>
+          <thead><tr>
+            <th>Employee</th><th>Messy: Risk Score</th><th>Messy: Skills</th><th>Clean: Risk Score</th><th>Clean: Skills</th><th>Decision Impact</th>
+          </tr></thead>
+          <tbody id="comparison-tbody"></tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ARCHITECTURE VIEW ── -->
+    <div class="view" id="view-architecture">
+      <div class="page-title">Data Architecture</div>
+      <div class="page-sub">From raw system exports to AI-ready output — the five-layer model</div>
+
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:2px;margin-bottom:20px;">
+        <!-- Architecture layers -->
+        <div id="arch-layer-0" class="table-section" style="padding:16px;cursor:pointer;border-top:3px solid var(--g400);" onclick="showLayer(0)">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g400);">Layer 1</div>
+          <div style="font-weight:700;color:var(--navy);margin:4px 0 6px;font-size:13px;">Source Systems</div>
+          <div style="font-size:11.5px;color:var(--g600);">SuccessFactors · Workable · Moodle · Perf Tool</div>
+        </div>
+        <div id="arch-layer-1" class="table-section" style="padding:16px;cursor:pointer;border-top:3px solid #1D4ED8;" onclick="showLayer(1)">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#1D4ED8;">Layer 2</div>
+          <div style="font-weight:700;color:var(--navy);margin:4px 0 6px;font-size:13px;">Ingestion</div>
+          <div style="font-size:11.5px;color:var(--g600);">API / CSV export · Schema mapping · Landing zone</div>
+        </div>
+        <div id="arch-layer-2" class="table-section" style="padding:16px;cursor:pointer;border-top:3px solid var(--teal);" onclick="showLayer(2)">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--teal);">Layer 3</div>
+          <div style="font-weight:700;color:var(--navy);margin:4px 0 6px;font-size:13px;">Processing</div>
+          <div style="font-size:11.5px;color:var(--g600);">Identity resolution · Title normalization · Skill inference</div>
+        </div>
+        <div id="arch-layer-3" class="table-section" style="padding:16px;cursor:pointer;border-top:3px solid var(--amber);" onclick="showLayer(3)">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--amber);">Layer 4</div>
+          <div style="font-weight:700;color:var(--navy);margin:4px 0 6px;font-size:13px;">Feature Store</div>
+          <div style="font-size:11.5px;color:var(--g600);">Employee 360 · Skill vector · Confidence matrix</div>
+        </div>
+        <div id="arch-layer-4" class="table-section" style="padding:16px;cursor:pointer;border-top:3px solid var(--navy);" onclick="showLayer(4)">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--navy);">Layer 5</div>
+          <div style="font-weight:700;color:var(--navy);margin:4px 0 6px;font-size:13px;">AI Output</div>
+          <div style="font-size:11.5px;color:var(--g600);">Skill gap scores · Attrition signals · Decision surface</div>
+        </div>
+      </div>
+
+      <div class="table-section" style="padding:20px;" id="layer-detail">
+        <div style="font-size:13px;color:var(--g400);text-align:center;padding:20px;">Click a layer above to explore details</div>
+      </div>
+
+      <div style="margin-top:18px;" class="table-section" style="padding:18px;">
+        <div style="padding:16px 18px;border-bottom:1px solid var(--g200);">
+          <div class="table-title">Payroll Constraint — Adapted Approach</div>
+        </div>
+        <div style="padding:16px 18px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div style="background:#FEF2F2;border-radius:8px;padding:14px;border-left:3px solid var(--red);">
+              <div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:8px;">❌ Oracle Payroll — Blocked (Day 30)</div>
+              <div style="font-size:12px;color:var(--g600);">Legal flagged as privacy risk. No compensation data, no salary bands, no bonus records available.</div>
+              <div style="margin-top:8px;font-size:11.5px;color:var(--g400);">Missing signals: comp satisfaction, salary gap vs market, equity cliff</div>
+            </div>
+            <div style="background:#F0FDFA;border-radius:8px;padding:14px;border-left:3px solid var(--teal);">
+              <div style="font-size:12px;font-weight:700;color:var(--teal);margin-bottom:8px;">✓ Behavioral Proxy Signals (Replacement)</div>
+              <div style="font-size:12px;color:var(--g600);">Time since last promotion · Manager change frequency · Absence rate · Training completion rate · Tenure without role change</div>
+              <div style="margin-top:8px;font-size:11.5px;color:var(--amber);">⚠ Lower precision than comp data — predictions labeled directional, not deterministic</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end .content -->
+</div><!-- end .main -->
+
+<!-- MODAL -->
+<div class="overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-name">—</div>
+        <div class="modal-role" id="modal-role">—</div>
+      </div>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body">
+    </div>
+    <div class="action-footer">
+      <button class="action-btn secondary" onclick="closeModalDirect()">Close</button>
+      <button class="action-btn primary" id="modal-action-btn">Flag for Reskilling</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════
+
+const SKILL_MAP = {
+  "Sales Representative": ["CRM","Negotiation","Product Knowledge","Customer Service","Territory Management"],
+  "Branch Manager":       ["Team Leadership","P&L Management","Operations","Strategic Planning","Stakeholder Management"],
+  "Logistics Coordinator":["Inventory Management","ERP Systems","Supply Chain","Vendor Management","Route Optimization"],
+  "HR Generalist":        ["Recruitment","Employee Relations","HRIS","Payroll Processing","Labor Law"],
+  "Finance Analyst":      ["Financial Modeling","Excel","Budgeting","Reporting","SAP"],
+  "IT Support":           ["Network Administration","Troubleshooting","Windows Server","Help Desk","Cybersecurity Basics"],
+};
+
+const ROLES = Object.keys(SKILL_MAP);
+const LOCS  = ["Jakarta","Surabaya","Bandung","Makassar","Medan","Semarang","Yogyakarta","Denpasar"];
+const DEPTS = ["Sales","Operations","Finance","Human Resources","Information Technology","Logistics"];
+
+const TITLE_VARIANTS = {
+  "Sales Representative": {"Jakarta":"Sales Representative","Surabaya":"Senior Sales","Makassar":"Sales 2","Bandung":"Sales Rep","default":"Sales Executive"},
+  "Branch Manager":       {"Jakarta":"Branch Manager","Surabaya":"Kepala Cabang","Makassar":"Branch Head","default":"Branch Lead"},
+  "Logistics Coordinator":{"Jakarta":"Logistics Coordinator","Surabaya":"Koordinator Logistik","Makassar":"Logistics Staff","default":"Distribution Officer"},
+  "HR Generalist":        {"Jakarta":"HR Generalist","Surabaya":"HR Staff","Makassar":"People & Culture Staff","default":"HR Admin"},
+  "Finance Analyst":      {"Jakarta":"Finance Analyst","Surabaya":"Analis Keuangan","default":"Finance Staff"},
+  "IT Support":           {"Jakarta":"IT Support","Surabaya":"Technical Support","default":"IT Officer"},
+};
+
+function seededRand(seed) {
+  let s = seed;
+  return function() {
+    s = (s * 16807 + 0) % 2147483647;
+    return (s - 1) / 2147483646;
+  };
+}
+
+function buildEmployees() {
+  const r = seededRand(42);
+  const firstNames = ["Budi","Sari","Dewi","Andi","Rini","Hendra","Fitri","Agus","Yuni","Doni","Maya","Rizki","Nadia","Fajar","Ayu","Wahyu","Lina","Dian","Eko","Putri","Bayu","Sinta","Rama","Wulan","Arif","Nurul","Yoga","Citra","Toni","Ria","Gilang","Hani","Irfan","Karina","Lutfi","Mega","Novan","Pandu","Reza","Tanto","Vino","Widi","Yola","Zaki","Adit","Bima","Cahya","Dinda","Erian","Fina","Gading","Hesti","Ivan","Joko","Kiki"];
+  const lastNames  = ["Santoso","Wijaya","Pratama","Kusuma","Hidayat","Rahayu","Purnama","Setiawan","Wibowo","Andika","Permata","Saputra","Nugroho","Halim","Susanto","Prabowo","Mahendra","Utama","Kurniawan","Hartanto","Gunawan","Suryadi","Mulyono","Budiman","Soetopo","Iskandar","Firmansyah","Hermawan","Rachman","Tanaka"];
+  const pick = (arr) => arr[Math.floor(r() * arr.length)];
+
+  const messy = [], clean = [];
+
+  for (let i = 0; i < 200; i++) {
+    const role = pick(ROLES);
+    const loc  = pick(LOCS);
+    const skills = SKILL_MAP[role];
+    const joinYear = 2018 + Math.floor(r() * 7);
+    const tenure = 2026 - joinYear;
+    const titleRaw = (TITLE_VARIANTS[role][loc] || TITLE_VARIANTS[role].default || role);
+    const perfScores = {};
+    for (let y = 2022; y <= 2025; y++) perfScores[y] = +(2.5 + r() * 2.5).toFixed(1);
+    const managerChanges = Math.floor(r() * 5);
+    const absentDays = Math.floor(r() * 31);
+    const lastPromo = r() < 0.4 ? null : 2021 + Math.floor(r() * 5);
+    const training = Math.floor(r() * 16);
+    const fname = pick(firstNames), lname = pick(lastNames);
+
+    // Messy record
+    const m = {
+      id: `EMP-${2800+i}`,
+      ats_id: `candidate_${800+i}`,
+      lms_id: `LMS${1000+i}`,
+      name: `${fname} ${lname}`,
+      title_raw: titleRaw,
+      location: r() < 0.17 ? null : loc,
+      dept: DEPTS[ROLES.indexOf(role)],
+      skills: r() < 0.45 ? [] : (r() < 0.3 ? skills.slice(0,2) : skills),
+      perf: r() < 0.31 ? {} : (r() < 0.3 ? {[2024]: perfScores[2024]} : perfScores),
+      tenure, managerChanges, absentDays, lastPromo, training,
+      joinDate: `${joinYear}-${String(Math.ceil(r()*12)).padStart(2,'0')}-${String(Math.ceil(r()*28)).padStart(2,'0')}`,
+    };
+    messy.push(m);
+
+    // Confidence
+    let conf = 1.0;
+    if (!m.skills.length) conf -= 0.30;
+    else if (m.skills.length < 3) conf -= 0.15;
+    if (!Object.keys(m.perf).length) conf -= 0.25;
+    else if (Object.keys(m.perf).length < 2) conf -= 0.10;
+    if (!m.location) conf -= 0.10;
+    conf = Math.max(+conf.toFixed(2), 0.10);
+
+    // Attrition risk
+    let risk = 0.05;
+    const perfArr = Object.values(m.perf);
+    if (perfArr.length) {
+      const avg = perfArr.reduce((a,b)=>a+b,0)/perfArr.length;
+      if (avg < 3.2) risk += 0.25; else if (avg < 3.8) risk += 0.10;
+    }
+    if (managerChanges >= 3) risk += 0.20;
+    if (tenure >= 4 && !lastPromo) risk += 0.20;
+    if (absentDays > 15) risk += 0.15;
+    if (tenure < 2) risk += 0.10;
+    risk = Math.min(+(risk + (r()-0.5)*0.1).toFixed(2), 0.95);
+
+    const tier = risk >= 0.65 ? "HIGH" : risk >= 0.40 ? "MEDIUM" : "LOW";
+
+    let skillsClean, skillsSource;
+    if (!m.skills.length) { skillsClean = skills.slice(0,3); skillsSource = "inferred"; }
+    else if (m.skills.length < 3) { skillsClean = [...m.skills, ...skills.filter(s=>!m.skills.includes(s)).slice(0,2)]; skillsSource = "enriched"; }
+    else { skillsClean = m.skills; skillsSource = "sourced"; }
+
+    const matchMethod = r() < 0.5 ? "name+joindate" : r() < 0.7 ? "name+dept" : "fuzzy_name";
+    const matchConf = matchMethod === "name+joindate" ? 0.95 : matchMethod === "name+dept" ? 0.82 : 0.68;
+
+    clean.push({
+      canonical_id: `MN-RESOLVED-${1000+i}`,
+      id: m.id, ats_id: m.ats_id, lms_id: m.lms_id,
+      name: m.name, role, title_raw: titleRaw,
+      location: m.location || loc,
+      dept: m.dept,
+      skills: skillsClean, skills_source: skillsSource,
+      perf: perfScores, tenure, managerChanges, absentDays, lastPromo, training,
+      data_conf: conf, attrition_risk: risk, risk_tier: tier,
+      pred_conf: +(conf * (0.85 + r()*0.15)).toFixed(2),
+      review_flag: conf < 0.60,
+      review_reasons: [
+        ...(!m.skills.length ? ["skills_inferred"] : []),
+        ...(!Object.keys(m.perf).length ? ["no_perf_history"] : []),
+        ...(!m.location ? ["location_missing"] : []),
+      ],
+      match_method: matchMethod,
+      match_confidence: matchConf,
+      identity_resolved: true,
+      joinDate: m.joinDate,
+    });
+  }
+  return { messy, clean };
+}
+
+const DATA = buildEmployees();
+let currentDataset = 'messy';
+let riskFilter = 'ALL';
+let currentIdTab = 'resolved';
+
+// ═══════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════
+const viewTitles = { dashboard:"Dashboard Overview", employees:"Employee Risk List", identity:"Identity Resolution", comparison:"Data Quality Impact", architecture:"Data Architecture" };
+
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`view-${id}`).classList.add('active');
+  document.getElementById(`view-${id}`).classList.add('fade-in');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick') === `showView('${id}')`) n.classList.add('active');
+  });
+  document.getElementById('topbar-title').textContent = viewTitles[id] || id;
+  renderView(id);
+}
+
+// ═══════════════════════════════════════════════════════
+// DATASET TOGGLE
+// ═══════════════════════════════════════════════════════
+function setDataset(ds) {
+  currentDataset = ds;
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  const badge = document.getElementById('dataset-badge');
+  badge.className = `data-badge ${ds}`;
+  badge.textContent = ds === 'messy' ? 'Dataset A' : 'Dataset B';
+  renderCurrentView();
+}
+
+function renderCurrentView() {
+  const active = document.querySelector('.view.active');
+  if (active) renderView(active.id.replace('view-',''));
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDERERS
+// ═══════════════════════════════════════════════════════
+function renderView(id) {
+  if (id === 'dashboard') renderDashboard();
+  if (id === 'employees') renderEmployees();
+  if (id === 'identity')  renderIdentity();
+  if (id === 'comparison') renderComparison();
+}
+
+function confColor(c) {
+  if (c >= 0.80) return 'var(--green)';
+  if (c >= 0.60) return 'var(--amber)';
+  return 'var(--red)';
+}
+function confClass(c) {
+  if (c >= 0.80) return 'hi'; if (c >= 0.60) return 'med'; return 'lo';
+}
+
+function renderDashboard() {
+  const isMessy = currentDataset === 'messy';
+  const clean = DATA.clean;
+
+  // Banner
+  const banner = document.getElementById('quality-banner');
+  banner.className = `quality-banner ${currentDataset}`;
+  banner.querySelector('.banner-title').className = `banner-title ${currentDataset}`;
+  if (isMessy) {
+    banner.querySelector('.banner-title').textContent = 'Dataset A — Enterprise Reality (Unprocessed)';
+    banner.querySelector('.banner-sub').textContent = '45% missing skill fields · 31% no performance history · 30 conflicting join dates · 17% missing location · Identity not resolved across systems';
+    document.getElementById('banner-conf').textContent = 'Avg Confidence: 0.44';
+    document.getElementById('banner-conf').className = 'banner-stat messy';
+  } else {
+    banner.querySelector('.banner-title').textContent = 'Dataset B — Post-Processing (Clean & Resolved)';
+    banner.querySelector('.banner-sub').textContent = '100% identities resolved · Skills inferred where missing · Confidence scores calibrated · 37 records flagged for HR review';
+    document.getElementById('banner-conf').textContent = 'Avg Confidence: 0.71';
+    document.getElementById('banner-conf').className = 'banner-stat clean';
+  }
+  document.getElementById('dash-sub').textContent = isMessy
+    ? 'Showing raw unprocessed data — confidence and predictions are significantly degraded'
+    : 'Showing post-processing data — identity resolved, skills enriched, confidence calibrated';
+
+  // Stats
+  if (isMessy) {
+    const high = clean.filter(e=>e.risk_tier==='HIGH').length;
+    const med  = clean.filter(e=>e.risk_tier==='MEDIUM').length;
+    document.getElementById('val-risk').textContent = high + med;
+    document.getElementById('sub-risk').innerHTML = '<span style="color:var(--orange);font-size:10.5px;font-weight:600;">⚠ Unreliable — low data quality</span>';
+    document.getElementById('val-conf').textContent = '0.44';
+    document.getElementById('sub-conf').textContent = 'Below actionable threshold (0.60)';
+    document.getElementById('val-gaps').textContent = '91';
+    document.getElementById('sub-gaps').textContent = 'Records missing skill fields';
+    document.getElementById('val-review').textContent = 'N/A';
+    document.getElementById('sub-review').textContent = 'Cannot compute on messy data';
+    document.getElementById('stat-risk').className = 'stat-card warning';
+  } else {
+    const high = clean.filter(e=>e.risk_tier==='HIGH').length;
+    const med  = clean.filter(e=>e.risk_tier==='MEDIUM').length;
+    const rev  = clean.filter(e=>e.review_flag).length;
+    const avgConf = (clean.reduce((a,e)=>a+e.data_conf,0)/clean.length).toFixed(2);
+    document.getElementById('val-risk').textContent = high + med;
+    document.getElementById('sub-risk').textContent = `${high} HIGH, ${med} MEDIUM risk`;
+    document.getElementById('val-conf').textContent = avgConf;
+    document.getElementById('sub-conf').textContent = 'Actionable for most records';
+    document.getElementById('val-gaps').textContent = clean.filter(e=>e.skills_source!=='sourced').length;
+    document.getElementById('sub-gaps').textContent = 'Inferred or enriched skills';
+    document.getElementById('val-review').textContent = rev;
+    document.getElementById('sub-review').textContent = 'Needs HR confirmation';
+    document.getElementById('stat-risk').className = 'stat-card danger';
+  }
+
+  // Confidence chart
+  renderConfChart(isMessy);
+  renderDeptChart(isMessy);
+
+  // Top risk table
+  renderTopRiskTable(isMessy);
+}
+
+function renderConfChart(isMessy) {
+  const buckets = [0,0,0,0,0]; // <0.3, 0.3-0.5, 0.5-0.7, 0.7-0.9, 0.9+
+  const vals = isMessy
+    ? DATA.clean.map(e => e.data_conf * (0.4 + Math.random()*0.3)) // simulate messy
+    : DATA.clean.map(e => e.data_conf);
+  vals.forEach(v => {
+    if (v < 0.3) buckets[0]++;
+    else if (v < 0.5) buckets[1]++;
+    else if (v < 0.7) buckets[2]++;
+    else if (v < 0.9) buckets[3]++;
+    else buckets[4]++;
+  });
+  const max = Math.max(...buckets);
+  const colors = isMessy ? ['#EF4444','#F97316','#F59E0B','#84CC16','#22C55E']
+                         : ['#FECACA','#FED7AA','#FDE68A','#86EFAC','#22C55E'];
+  const labels = ['< 0.3','0.3–0.5','0.5–0.7','0.7–0.9','0.9+'];
+  const chart = document.getElementById('conf-chart');
+  const lbls  = document.getElementById('conf-labels');
+  chart.innerHTML = buckets.map((v,i) => `
+    <div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;">
+      <div style="font-size:10px;font-weight:600;color:var(--g400);">${v}</div>
+      <div style="width:100%;background:${colors[i]};height:${Math.round(v/max*100)}px;border-radius:4px 4px 0 0;min-height:4px;"></div>
+    </div>`).join('');
+  lbls.innerHTML = labels.map(l=>`<div style="flex:1;text-align:center;">${l}</div>`).join('');
+}
+
+function renderDeptChart(isMessy) {
+  const depts = DEPTS;
+  const counts = depts.map(d => DATA.clean.filter(e=>e.dept===d));
+  const chart = document.getElementById('dept-chart');
+  chart.innerHTML = depts.map((d,i) => {
+    const group = counts[i];
+    const highCount = isMessy ? '?' : group.filter(e=>e.risk_tier==='HIGH'||e.risk_tier==='MEDIUM').length;
+    const total = group.length;
+    const pct = isMessy ? 0 : Math.round((group.filter(e=>e.risk_tier==='HIGH'||e.risk_tier==='MEDIUM').length/Math.max(total,1))*100);
+    const color = pct > 40 ? '#EF4444' : pct > 20 ? '#F59E0B' : '#22C55E';
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+      <div style="font-size:11.5px;color:var(--g600);width:120px;flex-shrink:0;">${d}</div>
+      <div style="flex:1;background:var(--g100);border-radius:3px;height:8px;overflow:hidden;">
+        <div style="width:${isMessy?0:pct}%;background:${color};height:100%;transition:width .4s;"></div>
+      </div>
+      <div style="font-size:11px;font-family:'DM Mono',monospace;color:${color};width:40px;text-align:right;">${isMessy?'?%':pct+'%'}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderTopRiskTable(isMessy) {
+  const tbody = document.getElementById('top-risk-tbody');
+  document.getElementById('risk-table-sub').innerHTML = isMessy
+    ? '<span style="color:var(--orange);font-weight:600;">⚠ WARNING: Scores shown but UNRELIABLE — 45% missing skills, 31% no performance history. Do not act on these numbers.</span>'
+    : `<span style="color:var(--teal);font-weight:600;">✓ Clean data — ${DATA.clean.filter(e=>e.risk_tier==='HIGH').length} HIGH risk · ${DATA.clean.filter(e=>e.risk_tier==='MEDIUM').length} MEDIUM risk · Predictions are actionable</span>`;
+  
+  const top = DATA.clean
+    .filter(e => isMessy ? true : (e.risk_tier==='HIGH'||e.risk_tier==='MEDIUM'))
+    .sort((a,b) => b.attrition_risk - a.attrition_risk)
+    .slice(0,8);
+
+  tbody.innerHTML = top.map((e,i) => {
+    const messy_m = DATA.messy[i];
+    const showScore = !isMessy && e.data_conf >= 0.60;
+    const isReview = e.review_flag;
+    return `<tr class="${isReview && !isMessy?'review-row':''}">
+      <td><div class="emp-name">${e.name}</div><div class="emp-id">${e.id}</div></td>
+      <td style="font-size:12px;">${isMessy ? (e.title_raw||e.role) : e.role}</td>
+      <td style="font-size:12px;">${isMessy ? (messy_m.location||'<span style="color:var(--g400);font-style:italic;">Unknown</span>') : e.location}</td>
+      <td>
+        <span class="risk-badge ${e.risk_tier}" style="${isMessy?'opacity:0.5;':''}">${e.risk_tier}</span>
+        ${isMessy ? '<div style="font-size:9.5px;color:var(--orange);margin-top:2px;">⚠ unverified</div>' : ''}
+      </td>
+      <td>
+        ${isMessy
+          ? `<span style="font-weight:700;font-family:'DM Mono',monospace;color:var(--orange);">${Math.round(e.attrition_risk*100)}%</span><span style="font-size:9px;color:var(--orange);margin-left:4px;">±high error</span>`
+          : showScore
+            ? `<span style="font-weight:700;font-family:'DM Mono',monospace;color:${e.attrition_risk>=0.65?'var(--red)':e.attrition_risk>=0.40?'var(--orange)':'var(--green2)'}">${Math.round(e.attrition_risk*100)}%</span>`
+            : '<span class="review-flag">⚠ Review needed</span>'
+        }
+      </td>
+      <td>${confBarHtml(isMessy ? Math.max(e.data_conf*0.55,0.1) : e.data_conf)}</td>
+      <td><button class="action-btn ${isMessy||isReview?'disabled':'primary'}" onclick="${!isMessy&&!isReview?`openModal(${e.canonical_id.split('-')[2]})`:'null'}">${isReview&&!isMessy?'Review Data':'View Detail'}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function confBarHtml(c) {
+  const cls = confClass(c);
+  const col = confColor(c);
+  return `<div class="conf-bar-wrap">
+    <div class="conf-bar"><div class="conf-fill" style="width:${c*100}%;background:${col};"></div></div>
+    <span class="conf-val ${cls}">${c.toFixed(2)}</span>
+  </div>`;
+}
+
+// ── EMPLOYEES VIEW ──
+function filterRisk(tier, el) {
+  riskFilter = tier;
+  document.querySelectorAll('#risk-filter-row .filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderEmployees();
+}
+
+function renderEmployees() {
+  const isMessy = currentDataset === 'messy';
+  const banner = document.getElementById('emp-banner');
+  banner.className = `quality-banner ${currentDataset}`;
+  document.getElementById('emp-banner-title').className = `banner-title ${currentDataset}`;
+  if (isMessy) {
+    document.getElementById('emp-banner-title').textContent = 'Viewing raw data — predictions unreliable';
+    document.getElementById('emp-banner-sub').textContent = '45% missing skill fields. Scores suppressed for low-confidence records. Identity not resolved.';
+  } else {
+    document.getElementById('emp-banner-title').textContent = 'Viewing post-processed data — all employees with calibrated scores';
+    document.getElementById('emp-banner-sub').textContent = 'Skills enriched, identities resolved, confidence scored. 37 records flagged for HR confirmation.';
+  }
+
+  let employees = DATA.clean;
+  if (riskFilter === 'REVIEW') employees = employees.filter(e=>e.review_flag);
+  else if (riskFilter !== 'ALL') employees = employees.filter(e=>e.risk_tier===riskFilter);
+
+  document.getElementById('emp-count').textContent = `Showing ${employees.length} of 200 records`;
+
+  const tbody = document.getElementById('emp-tbody');
+  tbody.innerHTML = employees.slice(0,60).map((e,idx) => {
+    const showScore = !isMessy && !e.review_flag;
+    const effConf = isMessy ? Math.max(e.data_conf*0.5,0.1) : e.data_conf;
+    const messy_m = DATA.messy[DATA.clean.indexOf(e)];
+    const skillDisplay = isMessy
+      ? (messy_m?.skills?.length ? messy_m.skills.slice(0,2).map(s=>`<span class="skill-pill">${s}</span>`).join('')+'…' : '<span style="font-size:11px;color:var(--g400);font-style:italic;">No skills on record</span>')
+      : e.skills.slice(0,3).map(s=>`<span class="skill-pill ${e.skills_source==='inferred'?'inferred':''}">${s}</span>`).join('');
+    return `<tr class="${e.review_flag&&!isMessy?'review-row':''}">
+      <td>
+        <div class="emp-name">${e.name}</div>
+        <div class="emp-id">${isMessy?e.id:e.canonical_id}</div>
+      </td>
+      <td style="font-size:12px;color:var(--g600);">${isMessy?(e.title_raw||e.role):e.role}</td>
+      <td style="font-size:12px;">${isMessy?(messy_m?.location||'<i style="color:var(--g400)">Unknown</i>'):e.location}</td>
+      <td>
+        <span class="risk-badge ${e.risk_tier}" style="${isMessy?'opacity:0.5;':''}">${e.risk_tier}</span>
+        ${isMessy ? '<div style="font-size:9px;color:var(--orange);margin-top:2px;">⚠ unverified</div>' : ''}
+      </td>
+      <td style="font-family:'DM Mono',monospace;font-size:13px;">
+        ${isMessy
+          ? `<span style="font-weight:700;color:var(--orange);opacity:0.8;">${Math.round(e.attrition_risk*100)}%</span><span style="font-size:9px;color:var(--orange);display:block;">±high error</span>`
+          : showScore
+            ? `<span style="font-weight:700;color:${e.attrition_risk>=0.65?'var(--red)':e.attrition_risk>=0.40?'var(--orange)':'var(--green2)'}">${Math.round(e.attrition_risk*100)}%</span>`
+            : '<span class="review-flag">⚠ Review</span>'
+        }
+      </td>
+      <td>${skillDisplay}</td>
+      <td>${confBarHtml(effConf)}</td>
+      <td><button class="action-btn ${isMessy||e.review_flag?'secondary':'primary'}" onclick="openModal(${e.canonical_id.split('-')[2]})">${e.review_flag&&!isMessy?'Confirm Data':'View'}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── IDENTITY VIEW ──
+function showIdTab(tab, el) {
+  currentIdTab = tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderIdentity();
+}
+
+function renderIdentity() {
+  const container = document.getElementById('id-cards-container');
+  let employees = DATA.clean;
+  if (currentIdTab === 'resolved') employees = employees.filter(e=>e.match_confidence>=0.90);
+  else if (currentIdTab === 'flagged') employees = employees.filter(e=>e.match_confidence>=0.65&&e.match_confidence<0.90);
+  else employees = employees.filter(e=>e.match_confidence<0.65);
+
+  if (!employees.length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">✓</div><div class="empty-title">No records in this category</div><div class="empty-sub">All employees have been processed</div></div>`;
+    return;
+  }
+
+  container.innerHTML = employees.slice(0,20).map(e => {
+    const cardClass = e.match_confidence >= 0.90 ? 'resolved' : e.match_confidence >= 0.65 ? 'flagged' : 'unresolved';
+    const hasLms = e.match_confidence >= 0.70;
+    return `<div class="id-card ${cardClass}">
+      <div class="id-header">
+        <div>
+          <div class="id-name">${e.name}</div>
+          <div class="id-canonical">${e.canonical_id}</div>
+        </div>
+        <div>${confBarHtml(e.match_confidence)}</div>
+      </div>
+      <div class="id-systems">
+        <span class="sys-tag hris">HRIS: ${e.id}</span>
+        <span class="sys-tag ats">ATS: ${e.ats_id}</span>
+        ${hasLms?`<span class="sys-tag lms">LMS: ${e.lms_id}</span>`:`<span class="sys-tag missing">LMS: not matched</span>`}
+        <span class="sys-tag missing" style="text-decoration:line-through;opacity:.5">Payroll: blocked</span>
+      </div>
+      <div class="match-method">match: ${e.match_method} · confidence: ${e.match_confidence.toFixed(2)}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── COMPARISON VIEW ──
+function renderComparison() {
+  const clean = DATA.clean;
+  const avgCleanConf = (clean.reduce((a,e)=>a+e.data_conf,0)/clean.length).toFixed(2);
+  const reviewCount = clean.filter(e=>e.review_flag).length;
+  const inferredSkills = clean.filter(e=>e.skills_source==='inferred').length;
+
+  document.getElementById('compare-messy').innerHTML = [
+    ["Records with 0 skills","91 / 200 (45%)","bad"],
+    ["No performance history","62 / 200 (31%)","bad"],
+    ["Avg data confidence","0.44","bad"],
+    ["Actionable predictions","~28%","bad"],
+    ["Identity resolved","0%","bad"],
+    ["Duplicate records","10 found","warn"],
+    ["Inconsistent job titles","23 variants","warn"],
+  ].map(([k,v,c])=>`<div class="metric-row"><span class="metric-label">${k}</span><span class="metric-val ${c}">${v}</span></div>`).join('');
+
+  document.getElementById('compare-clean').innerHTML = [
+    ["Skills enriched / inferred",`${inferredSkills} records (role-inferred)`,"warn"],
+    ["No performance history","Excluded from model","warn"],
+    ["Avg data confidence",avgCleanConf,"good"],
+    ["Actionable predictions","100% (with confidence tiers)","good"],
+    ["Identity resolved","200 / 200","good"],
+    ["Duplicate records","Merged + flagged","good"],
+    ["Job titles","6 canonical roles","good"],
+  ].map(([k,v,c])=>`<div class="metric-row"><span class="metric-label">${k}</span><span class="metric-val ${c}">${v}</span></div>`).join('');
+
+  // Comparison table
+  const sample = clean.filter(e=>e.risk_tier==='HIGH'||e.review_flag).slice(0,10);
+  const tbody = document.getElementById('comparison-tbody');
+  tbody.innerHTML = sample.map(e => {
+    const messy_m = DATA.messy[DATA.clean.indexOf(e)];
+    const messyScore = `<span style='color:var(--orange);font-weight:700;font-family:"DM Mono",monospace;opacity:0.75;'>${Math.round(e.attrition_risk*100)}%</span><span style='font-size:10px;color:var(--orange);'> ⚠ ±high error</span>`;
+    const cleanScore = e.review_flag ? '<span class="review-flag">⚠ Review needed</span>' : `<span style="font-weight:700;color:${e.attrition_risk>=0.65?'var(--red)':'var(--orange)'}">${Math.round(e.attrition_risk*100)}%</span>`;
+    const messySkills = messy_m?.skills?.length ? messy_m.skills.slice(0,2).join(', ') : '<i style="color:var(--g400)">None on record</i>';
+    const cleanSkills = e.skills.slice(0,3).join(', ');
+    const impact = e.review_flag ? '<span style="color:var(--amber);font-size:11px;">Cannot act — data incomplete</span>' : '<span style="color:var(--teal);font-size:11px;">✓ Actionable reskilling plan</span>';
+    return `<tr>
+      <td><div class="emp-name">${e.name}</div><div class="emp-id">${e.role}</div></td>
+      <td style="font-size:12px;">${messyScore}</td>
+      <td style="font-size:11.5px;">${messySkills}</td>
+      <td style="font-size:12px;">${cleanScore}</td>
+      <td style="font-size:11.5px;">${cleanSkills}</td>
+      <td>${impact}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── ARCHITECTURE ──
+const layerDetails = [
+  {color:'var(--g600)',title:'Source Systems',detail:`SuccessFactors (HRIS) — employee master, job titles, join dates. Workable (ATS) — hiring records, candidate IDs. Moodle (LMS) — course completions, skill tags. Custom Performance Tool — branch-level ratings. Oracle Payroll — <strong style="color:var(--red)">BLOCKED (Day 30): privacy risk per Legal</strong>.`},
+  {color:'#1D4ED8',title:'Ingestion Layer',detail:`Batch exports every 24 hours via CSV or API where available. Schema mapping to internal standard (field naming, type coercion). Raw landing zone — data is stored as-is before transformation. Full audit log tracks every change for lineage tracing.`},
+  {color:'var(--teal)',title:'Processing Layer',detail:`Identity resolution: name + join-date fuzzy matching (Jaro-Winkler ≥ 0.88) + department/location confirmation. Job title normalization to 6 canonical role archetypes. Skill inference: Tier 1 (sourced) → Tier 2 (enriched) → Tier 3 (role-inferred) → Tier 4 (review). Confidence scoring: per-record 0–1 score based on field completeness.`},
+  {color:'var(--amber)',title:'Feature Store',detail:`Employee 360 record: all resolved fields + inferred values + confidence scores. Skill vector: present / inferred / missing flags per skill. Risk signal features: tenure gap, manager changes, absence rate, training completion. Confidence matrix: per-record + per-feature confidence tags for model consumption.`},
+  {color:'var(--navy)',title:'AI Output Layer',detail:`Skill gap model: compare employee skill vector vs canonical role benchmark. Output: gap score 0–1, missing skill list, recommended Moodle course. Attrition signals: directional risk score using behavioral proxies (no payroll). Confidence-aware output: HIGH / LOW / REVIEW based on underlying data quality.`},
+];
+
+function showLayer(idx) {
+  const d = layerDetails[idx];
+  document.getElementById('layer-detail').innerHTML = `
+    <div style="border-left:3px solid ${d.color};padding-left:16px;">
+      <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px;">${d.title}</div>
+      <div style="font-size:13px;color:var(--g600);line-height:1.7;">${d.detail}</div>
+    </div>`;
+}
+
+// ── MODAL ──
+function openModal(idx) {
+  const emp = DATA.clean.find(e=>parseInt(e.canonical_id.split('-')[2])===idx);
+  if (!emp) return;
+  document.getElementById('modal-name').textContent = emp.name;
+  document.getElementById('modal-role').textContent = `${emp.role} · ${emp.location} · ${emp.dept}`;
+
+  const perfArr = Object.entries(emp.perf);
+  const avgPerf = perfArr.length ? (perfArr.reduce((a,[,v])=>a+v,0)/perfArr.length).toFixed(1) : 'N/A';
+  const showRisk = !emp.review_flag;
+
+  let bodyHtml = `
+    <div class="modal-section-title">Attrition Risk</div>
+    ${showRisk
+      ? `<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+          <span style="font-size:32px;font-weight:700;color:${emp.attrition_risk>=0.65?'var(--red)':emp.attrition_risk>=0.40?'var(--orange)':'var(--green2)'};">${Math.round(emp.attrition_risk*100)}%</span>
+          <span class="risk-badge ${emp.risk_tier}">${emp.risk_tier}</span>
+          <span style="font-size:11.5px;color:var(--g400);">Prediction confidence: ${emp.pred_conf.toFixed(2)}</span>
+        </div>
+        <div class="uncertainty-box"><strong>Model confidence: ${emp.data_conf.toFixed(2)}</strong> — ${emp.data_conf>=0.80?'High quality record. Prediction is reliable.':emp.data_conf>=0.60?'Moderate quality. Some signals inferred. Use with judgment.':'Partial data. Treat as directional indicator only.'}</div>`
+      : `<div class="uncertainty-box" style="border-left-color:var(--red);"><strong>⚠ Human Review Required</strong><br>Data confidence ${emp.data_conf.toFixed(2)} is below the 0.60 threshold. Risk score is suppressed. Reasons: ${emp.review_reasons.join(', ')||'multiple data gaps'}.</div>`
+    }
+    <div class="modal-section-title">Skills Profile</div>
+    <div class="skills-wrap">${emp.skills.map(s=>`<span class="skill-pill ${emp.skills_source==='inferred'?'inferred':''}">${s}</span>`).join('')}</div>
+    ${emp.skills_source!=='sourced'?`<div style="font-size:11px;color:var(--amber);margin-top:6px;">⚠ Skills ${emp.skills_source} from role benchmark — confirm with employee</div>`:''}
+    <div class="modal-section-title">Key Signals</div>
+    <div class="feature-grid">
+      <div class="feature-item"><div class="feature-key">tenure_years</div><div class="feature-val">${emp.tenure}</div></div>
+      <div class="feature-item"><div class="feature-key">manager_changes</div><div class="feature-val" style="color:${emp.managerChanges>=3?'var(--orange)':'var(--navy)'};">${emp.managerChanges}</div></div>
+      <div class="feature-item"><div class="feature-key">absent_days_last_yr</div><div class="feature-val" style="color:${emp.absentDays>15?'var(--orange)':'var(--navy)'};">${emp.absentDays}</div></div>
+      <div class="feature-item"><div class="feature-key">avg_performance</div><div class="feature-val" style="color:${parseFloat(avgPerf)<3.2?'var(--red)':'var(--navy)'};">${avgPerf}</div></div>
+      <div class="feature-item"><div class="feature-key">last_promotion</div><div class="feature-val" style="color:${!emp.lastPromo?'var(--orange)':'var(--navy)'};">${emp.lastPromo||'Never'}</div></div>
+      <div class="feature-item"><div class="feature-key">training_completed</div><div class="feature-val">${emp.training}</div></div>
+    </div>
+    <div class="modal-section-title">Identity</div>
+    <div class="id-systems">
+      <span class="sys-tag hris">HRIS: ${emp.id}</span>
+      <span class="sys-tag ats">ATS: ${emp.ats_id}</span>
+      <span class="sys-tag lms">LMS: ${emp.lms_id}</span>
+    </div>
+    <div class="match-method" style="margin-top:6px;">Matched via ${emp.match_method} · Confidence: ${emp.match_confidence.toFixed(2)}</div>
+  `;
+  document.getElementById('modal-body').innerHTML = bodyHtml;
+  document.getElementById('modal-action-btn').textContent = emp.review_flag ? 'Request HR Confirmation' : 'Flag for Reskilling';
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+// ── INIT ──
+renderDashboard();
+</script>
+</body>
+</html>
