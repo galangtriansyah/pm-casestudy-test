@@ -1,7 +1,7 @@
 WorkforceIQ is a decision interface for HR Managers at Medika Nusantara.
 It is not just a dashboard — it is a decision product, enabling HR Managers to take immediate action based on what they see.
 
-🔍 Key Features
+-Key Features
 Feature	Description
 Dataset Toggle	Switch between Dataset A (Messy) and Dataset B (Clean) to directly observe differences in insight quality
 Dashboard	Overview of high-risk employees, average confidence, skill gaps, and pending reviews
@@ -9,7 +9,7 @@ Employee Risk List	Filter by risk tier and view attrition score + skill profile 
 Identity Resolution	Explorer showing resolved, flagged, and unresolved records across 3 systems
 Data Quality Impact	Side-by-side comparison of messy vs clean data — the core argument of the case
 Data Architecture	5-layer model from source systems to AI output
-🎯 Confidence Signaling
+-Confidence Signaling
 Confidence	UI Representation
 ≥ 0.80	Score fully displayed with green badge
 0.60–0.79	Score displayed with uncertainty note and amber badge
@@ -17,7 +17,7 @@ Confidence	UI Representation
 
 Principle: It is better to hide a prediction than to show one that cannot be trusted.
 
-📊 About the Dataset
+-About the Dataset
 Dataset A — Messy (Enterprise Reality)
 
 Represents the real condition of Medika Nusantara’s data at initial access:
@@ -40,7 +40,7 @@ HIGH risk employees	1
 MEDIUM risk employees	31
 Records flagged for HR review	37
 Skills inferred from role	91 records
-📌 Key Columns in Dataset B
+-Key Columns in Dataset B
 canonical_id              → Unique ID after identity resolution
 job_title_normalized      → Standardized role (6 canonical roles)
 job_title_raw             → Original title from source system
@@ -51,7 +51,7 @@ risk_tier                 → HIGH / MEDIUM / LOW
 data_confidence_score     → 0.0 – 1.0
 review_flag               → True if confidence < 0.60
 review_reason             → Reason(s) for flag (pipe-separated)
-🧠 Attrition Risk Score Logic
+ Attrition Risk Score Logic
 
 The score is calculated using behavioral proxies, replacing Oracle Payroll data which was blocked due to legal constraints (Day 30 constraint):
 
@@ -68,17 +68,17 @@ Tier:
   >= 0.65 → HIGH
   >= 0.40 → MEDIUM
   <  0.40 → LOW
-📈 Data Confidence Score
+-Data Confidence Score
 Base: 1.0
 
 - 0.30  if no skills data
 - 0.15  if skills < 3 (partial)
 - 0.25  if no performance history
 - 0.10  if no location
-- 0.10  if join date conflict
+- 0.10  if join date conflicts
 
 < 0.60 → review_flag = True → score hidden in UI
-🏗️ Data Architecture (5 Layers)
+ Data Architecture (5 Layers)
 [Source Systems]
   SAP SuccessFactors (HRIS) · Workable (ATS) · Moodle (LMS) · Custom Perf Tool
   ❌ Oracle Payroll — BLOCKED (privacy risk, legal constraint, Day 30)
@@ -97,6 +97,6 @@ Base: 1.0
         ↓
 [AI Output]
   Skill gap score · Directional attrition signal · Confidence-aware decision surface
-🤖 AI Tools Used
+-AI Tools Used
 Tool	Purpose
 Claude (Anthropic): data architecture design, prototype code generation, synthetic data logic
