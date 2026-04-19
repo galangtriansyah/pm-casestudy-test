@@ -89,19 +89,19 @@ Base: 1.0
 [Source Systems]
   SAP SuccessFactors (HRIS) · Workable (ATS) · Moodle (LMS) · Custom Perf Tool
   ❌ Oracle Payroll — BLOCKED (privacy risk, legal constraint, Day 30)
-        ↓
+        -->
 [Ingestion Layer]
   Batch CSV/API export · Schema mapping · Raw landing zone · Audit log
-        ↓
+        -->
 [Processing Layer]
   Identity resolution (Jaro-Winkler fuzzy matching)
   Job title normalization → 6 canonical roles
   Skill inference (4-tier: sourced → enriched → inferred → review)
   Confidence scoring per record
-        ↓
+        -->
 [Feature Store]
   Employee 360 record · Skill vector · Behavioral signals · Confidence matrix
-        ↓
+      -->
 [AI Output]
   Skill gap score · Directional attrition signal · Confidence-aware decision surface
 -AI Tools Used
