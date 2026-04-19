@@ -88,7 +88,6 @@ Base: 1.0
  Data Architecture (5 Layers)
 [Source Systems]
   SAP SuccessFactors (HRIS) · Workable (ATS) · Moodle (LMS) · Custom Perf Tool
-  
   ❌ Oracle Payroll — BLOCKED (privacy risk, legal constraint, Day 30)
         ↓
 [Ingestion Layer]
